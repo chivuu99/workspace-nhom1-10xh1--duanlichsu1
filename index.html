@@ -91,15 +91,14 @@ input[type=date] { min-width: 130px; }
   <nav id="nav"></nav>
   
   <div style="margin-top:auto; padding-top:16px; border-top: 1px solid var(--bd); display:flex; flex-direction:column; gap:8px;">
-    <button class="btn p" onclick="saveOnlineData()" style="width:100%; justify-content:center;">☁️ Lưu & Đồng bộ Trực tuyến</button>
+    <button class="btn p" onclick="saveLocalData()" style="width:100%; justify-content:center;">💾 Lưu thay đổi</button>
   </div>
 </aside>
 <main id="main">
-  <div class="box" style="text-align:center; padding:40px;">Đang tải dữ liệu trực tuyến...</div>
+  <div class="box" style="text-align:center; padding:40px;">Đang tải giao diện...</div>
 </main>
 <script>
-// Sử dụng dịch vụ lưu trữ đám mây JSON công khai miễn phí dành riêng cho nhóm của Ái Chi
-const CLOUD_BIN_URL = "https://json.npoint.io/469f37efbc717a58a74e"; 
+const STORAGE_KEY = "ws_project_full_cache_v5";
 const LEADER_PIN = "1234";
 
 const DEFAULT_MEMBERS = [
@@ -151,6 +150,13 @@ let appData = {
   checks: {}
 };
 
+try {
+  const cached = localStorage.getItem(STORAGE_KEY);
+  if (cached) {
+    appData = JSON.parse(cached);
+  }
+} catch(e) {}
+
 let currentPage = (location.hash || '#ov').slice(1);
 let taskFilter = { owner: "", status: "" };
 let memberSearchQuery = "";
@@ -171,39 +177,13 @@ const calculateWeighted = (scores) => {
   return Math.round(total * 10) / 10;
 };
 
-// Tải dữ liệu trực tuyến từ Cloud
-async function fetchOnlineData() {
-  try {
-    const res = await fetch(CLOUD_BIN_URL);
-    if(res.ok) {
-      const data = await res.json();
-      if(data && data.members) {
-        appData = data;
-      }
-    }
-  } catch(e) {
-    console.log("Dùng dữ liệu mặc định cục bộ");
-  }
-  render();
-}
-
-// Lưu dữ liệu trực tuyến lên Cloud
-async function saveOnlineData() {
+function saveLocalData() {
   appData.updated = nowStr();
-  showNotification("Đang đồng bộ dữ liệu lên đám mây trực tuyến...", "ok");
   try {
-    const res = await fetch(CLOUD_BIN_URL, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appData)
-    });
-    if(res.ok) {
-      showNotification("☁️ Đã lưu và đồng bộ trực tuyến thành công! Mọi người mở link sẽ thấy ngay.", "ok");
-    } else {
-      showNotification("Lỗi kết nối khi lưu trực tuyến!", "err");
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    showNotification("Đã lưu thay đổi thành công!", "ok");
   } catch(e) {
-    showNotification("Không thể kết nối internet để lưu!", "err");
+    showNotification("Lỗi khi lưu dữ liệu!", "err");
   }
 }
 
@@ -263,13 +243,14 @@ const VIEWS = {
       </div>
       <div class="cols">
         <div class="box">
-          <h3>⚡ Lưu ý quan trọng</h3>
-          <p class="lbl">🌐 Web hiện đã được kết nối **Đám mây trực tuyến**.</p>
-          <p class="lbl">💾 Sau khi thay đổi bất kỳ thông tin gì, bạn nhớ bấm nút **Lưu & Đồng bộ Trực tuyến** ở góc trái để tất cả các bạn trong nhóm cùng truy cập và nhìn thấy nội dung cập nhật nhé!</p>
+          <h3>⚡ Hướng dẫn nhanh cho nhóm</h3>
+          <p class="lbl">1. Chỉnh sửa trực tiếp các thông tin trên các mục menu trái.</p>
+          <p class="lbl">2. Vào mục <b>✏️ Nhập điểm đánh giá</b> để tự chấm điểm cá nhân.</p>
+          <p class="lbl">3. Bấm nút <b>💾 Lưu thay đổi</b> ở góc trái để ghi nhớ ngay lập tức.</p>
         </div>
         <div class="box">
           <h3>🎯 Thành viên nhóm trưởng</h3>
-          <p class="lbl">Nhóm trưởng (Vũ Huỳnh Ái Chi) dùng mã PIN <b>1234</b> để chấm điểm tổng kết cho các thành viên.</p>
+          <p class="lbl">Nhóm trưởng (Vũ Huỳnh Ái Chi) dùng mã PIN <b>1234</b> để chấm điểm tổng kết.</p>
           <button class="btn p" onclick="switchPage('form')" style="margin-top:8px">Đến trang Nhập điểm ngay</button>
         </div>
       </div>
@@ -392,343 +373,3 @@ const VIEWS = {
                   <td><b>${fmtPct(m.leaderTotal)}</b></td>
                   <td><span class="tag">${diff}</span></td>
                   <td><button class="btn" style="padding:4px 8px" onclick="goToEval(${m.id})">✏️ Chấm</button></td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  },
-  details() {
-    return `
-      <h2>Chi tiết đánh giá tiêu chí</h2>
-      <p class="sub">Thanh trên: Tự đánh giá | Thanh dưới: Nhóm trưởng</p>
-      <div id="globalMsg"></div>
-      <div class="cols">
-        ${(appData.members || []).map(m => `
-          <div class="box">
-            <h3 style="margin:0 0 4px">${esc(m.name)}</h3>
-            <div class="lbl" style="margin-bottom:10px">${esc(m.role)}</div>${(appData.criteria || []).map((c, i) => {
-              const s = m.selfScores ? m.selfScores[i] : null;
-              const l = m.leaderScores ? m.leaderScores[i] : null;
-              return `
-                <div style="font-size:12px; margin-bottom:6px">
-                  <span>${esc(c.name)}: <b>${s ?? '—'} / ${l ?? '—'}</b></span>
-                  <div class="bar"><i style="width:${s ?? 0}%"></i></div>
-                  <div class="bar" style="margin-top:2px"><i style="width:${l ?? 0}%; background:var(--mu)"></i></div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `).join('')}
-      </div>
-    `;
-  },
-  form() {
-    return `
-      <h2>Nhập / Cập nhật đánh giá</h2>
-      <p class="sub">Nhập điểm 6 tiêu chí (0 - 100)</p>
-      <div id="globalMsg"></div>
-      <div class="box">
-        <div class="f" style="margin-bottom:12px">
-          <label>Chọn thành viên</label>
-          <select id="selMember" onchange="loadFormExisting()">
-            <option value="">-- Chọn thành viên --</option>
-            ${(appData.members || []).map(m => `<option value="${m.id}">${m.id}. ${esc(m.name)} (${esc(m.role)})</option>`).join('')}
-          </select>
-        </div>
-        <div class="f" style="margin-bottom:12px">
-          <label>Loại đánh giá</label>
-          <select id="evalType" onchange="togglePin(); loadFormExisting();">
-            <option value="self">Tự đánh giá</option>
-            <option value="leader">Đánh giá của Nhóm trưởng</option>
-          </select>
-        </div>
-        <div class="f" id="pinRow" style="display:none; margin-bottom:12px">
-          <label>Mã PIN nhóm trưởng</label>
-          <input type="password" id="leaderPin" placeholder="Mã mặc định: 1234">
-        </div>
-        <div class="score-grid" style="margin-bottom:16px">
-          ${(appData.criteria || []).map((c, i) => `
-            <div>
-              <div class="lbl">${esc(c.name)} (${c.weight}%)</div>
-              <input type="number" id="sc_${i}" min="0" max="100" placeholder="0-100" oninput="updatePreviewTotal()">
-            </div>
-          `).join('')}
-        </div>
-        <div style="margin-bottom:16px">
-          <div class="lbl">Nhận xét / Minh chứng</div>
-          <textarea id="evalComment" placeholder="Nêu rõ sản phẩm đã làm..."></textarea>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div><b>Tổng điểm dự kiến: </b><span id="previewTotal" class="big" style="color:var(--ac)">—</span></div>
-          <button class="btn p" onclick="submitEvaluation()">💾 Cập nhật điểm</button>
-        </div>
-      </div>
-    `;
-  },
-  rubric() {
-    return `
-      <h2>Bộ tiêu chí & Trọng số đánh giá</h2>
-      <p class="sub">Áp dụng nhất quán cho cả tự đánh giá và Nhóm trưởng chấm điểm</p>
-      <div id="globalMsg"></div>
-      <div class="wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:50px">#</th>
-              <th style="width:240px">Tên tiêu chí</th>
-              <th style="width:90px">Trọng số</th>
-              <th>Mô tả chi tiết & Hướng dẫn chấm điểm</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(appData.criteria || []).map((c, i) => {
-              const descs = [
-                "Đạt 100% khối lượng công việc đúng hạn. Trừ 10-20% điểm cho mỗi lần trễ hạn không lý do.",
-                "Sản phẩm chuẩn xác, không lỗi chính tả/kiến thức, trích dẫn rõ ràng, bố cục trực quan.",
-                "Chủ động báo cáo tiến độ, tự giác nhận việc, tuân thủ kỷ luật chung của nhóm.",
-                "Tương tác tích cực, phản hồi tin nhắn dưới 4h, sẵn sàng hỗ trợ đồng đội khi quá tải.",
-                "Đề xuất ý tưởng mới, thiết kế ấn tượng hoặc có sáng kiến làm bài thuyết trình sinh động.",
-                "Nói lưu khoát, làm chủ thời gian dưới 10 phút, tự tin, tương tác tốt với khán giả."
-              ];
-              return `
-                <tr>
-                  <td><b>${i + 1}</b></td>
-                  <td><b>${esc(c.name)}</b></td>
-                  <td><span class="tag t-ac">${c.weight}%</span></td>
-                  <td style="font-size:13px; color:var(--mu);">${descs[i] || 'Chấm theo thang 0 – 100.'}</td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  },
-  dl_rules() {
-    return `
-      <h2>Deadline & Quy tắc làm việc</h2>
-      <p class="sub">Nguyên tắc hợp tác minh bạch, trách nhiệm và tôn trọng lẫn nhau</p>
-      <div id="globalMsg"></div>
-      <div class="cols">
-        <div class="box">
-          <h3 style="margin-top:0">⏱️ Quy định xử lý trễ hạn Deadline</h3>
-          <ul style="padding-left:18px; line-height:1.7; margin-bottom:0;">
-            <li><b>Đúng hạn:</b> Hoàn thành sản phẩm đạt yêu cầu trước hoặc đúng ngày deadline.</li>
-            <li><b>Có nguy cơ trễ:</b> Phải báo cho nhóm trưởng <b>trước deadline tối thiểu 12 tiếng</b>.</li>
-            <li><b>Trễ không báo trước:</b> Trừ trực tiếp điểm kỷ luật và hợp tác nhóm.</li>
-          </ul>
-        </div>
-        <div class="box">
-          <h3 style="margin-top:0">🤝 Quy tắc giao tiếp & Làm việc nhóm</h3>
-          <ul style="padding-left:18px; line-height:1.7; margin-bottom:0;">
-            <li>Trả lời tin nhắn nhóm trong vòng 4 tiếng đối với các thông báo quan trọng.</li>
-            <li>Tự giác cập nhật tiến độ công việc trên Workspace này.</li>
-            <li>Mọi ý kiến đóng góp mang tính xây dựng, tôn trọng khác biệt.</li>
-          </ul>
-        </div>
-      </div>
-    `;
-  },
-  chk() {
-    const checks = appData.checks || {};
-    const CHECKLIST_SECTIONS = [
-      ["Nội dung bài viết", ["Nội dung đã hoàn thành đầy đủ", "Thông tin lịch sử / văn hóa đã kiểm chứng", "Trích dẫn nguồn tư liệu rõ ràng", "Các mục theo đúng cấu trúc 10 phút"]],
-      ["Slide thuyết trình", ["Slide thiết kế trực quan, sạch đẹp", "Hình ảnh sắc nét, có bản quyền/chất lượng cao", "Màu sắc, phông chữ nhất quán", "Liên kết mượt mà giữa các phần"]],
-      ["Luyện tập thuyết trình", ["Đã phân chia người thuyết trình cụ thể", "Đã tổng duyệt bấm giờ toàn nhóm", "Khung thời gian đảm bảo tối đa 10 phút", "Chuẩn bị trước các câu hỏi phản biện"]],
-      ["Trước giờ G", ["Đã kiểm tra kỹ lỗi chính tả", "Đã chạy thử slide trên máy chiếu/kết nối", "Sao lưu slide lên Drive & USB dự phòng", "Thành viên hiểu rõ vai trò của mình"]]
-    ];
-    return `
-      <h2>Checklist kiểm tra trước thuyết trình</h2>
-      <p class="sub">Rà soát lại toàn bộ công tác chuẩn bị trước khi lên sàn</p>
-      <div id="globalMsg"></div>
-      <div class="cols">
-        ${CHECKLIST_SECTIONS.map((sec, sIdx) => `
-          <div class="box">
-            <h3 style="margin-top:0">${sec[0]}</h3>
-            <div>
-              ${sec[1].map((item, iIdx) => {
-                const key = `chk_${sIdx}_${iIdx}`;
-                const isChecked = !!checks[key];
-                return `
-                  <div class="chk-item">
-                    <input type="checkbox" id="${key}" ${isChecked ? 'checked' : ''} onchange="appData.checks['${key}']=this.checked;">
-                    <label for="${key}" style="cursor:pointer;">${esc(item)}</label>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  },
-  notes() {
-    return `
-      <h2>Ghi chú & Nhật ký dự án</h2>
-      <p class="sub">Lưu trữ các thông báo và thống nhất cuộc họp</p>
-      <div id="globalMsg"></div>
-      <div class="box" style="margin-bottom:16px;">
-        <h3 style="margin-top:0">Thêm ghi chú mới</h3>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <input id="nAuthor" placeholder="Tên người viết (VD: Vũ Huỳnh Ái Chi)" style="width:220px">
-          <input id="nText" placeholder="Nội dung ghi chú..." style="flex:1; min-width:240px;">
-          <button class="btn p" onclick="addNote()">📝 Thêm ghi chú</button>
-        </div>
-      </div>
-      <div class="wrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:160px">Thời gian</th>
-              <th style="width:180px">Người viết</th>
-              <th>Nội dung ghi chú</th>
-              <th style="width:40px"></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(appData.notes || []).map((n, idx) => `
-              <tr>
-                <td style="font-size:12px; color:var(--mu);">${esc(n.time)}</td>
-                <td><b>${esc(n.author)}</b></td>
-                <td>${esc(n.text)}</td>
-                <td><button class="x" onclick="appData.notes.splice(${idx},1); renderMain();">&times;</button></td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-  }
-};
-
-function renderNav() {
-  const navEl = document.getElementById('nav');
-  if (!navEl) return;
-  navEl.innerHTML = NAVIGATION.map(g => `
-    <div class="nav-group">
-      <div class="nav-title">${g.group}</div>
-      ${g.items.map(it => `<button onclick="switchPage('${it[0]}')" class="${it[0]===currentPage?'on':''}">${it[1]}</button>`).join('')}
-    </div>
-  `).join('');
-}
-
-function renderMain() {
-  const mainEl = document.getElementById('main');
-  if (!mainEl) return;
-  const fn = VIEWS[currentPage] || VIEWS.ov;
-  mainEl.innerHTML = fn();
-}
-
-function render() {
-  renderNav();
-  renderMain();
-}
-
-function switchPage(p) {
-  currentPage = p;
-  location.hash = p;
-  render();
-  window.scrollTo(0, 0);
-}
-
-function addTask() {
-  if(!appData.tasks) appData.tasks = [];
-  appData.tasks.unshift({ name: "Nhiệm vụ mới", owner: "", deadline: iso(new Date()), status: "Chưa bắt đầu", pct: 0, note: "" });
-  renderMain();
-}
-
-function addNote() {
-  const author = document.getElementById('nAuthor')?.value.trim();
-  const text = document.getElementById('nText')?.value.trim();
-  if(!author || !text) { showNotification("Vui lòng nhập tên người viết và nội dung ghi chú!", "err"); return; }
-  if(!appData.notes) appData.notes = [];
-  appData.notes.unshift({ time: nowStr(), author, text });
-  renderMain();
-}
-
-function goToEval(id) {
-  switchPage('form');
-  setTimeout(() => { const sel = document.getElementById('selMember'); if(sel) { sel.value = id; loadFormExisting(); } }, 50);
-}
-
-function togglePin() {
-  const row = document.getElementById('pinRow');
-  const type = document.getElementById('evalType')?.value;
-  if(row) row.style.display = (type === 'leader') ? 'grid' : 'none';
-}
-
-function loadFormExisting() {
-  const id = Number(document.getElementById('selMember')?.value);
-  const type = document.getElementById('evalType')?.value;
-  if(!id) return;
-  const m = (appData.members || []).find(x => x.id === id);
-  if(!m) return;
-  const scores = (type === 'leader') ? m.leaderScores : m.selfScores;
-  const comment = (type === 'leader') ? m.leaderComment : m.selfComment;
-  (appData.criteria || []).forEach((_, i) => {
-    const input = document.getElementById(`sc_${i}`);
-    if(input) input.value = (scores && scores[i] !== null && scores[i] !== undefined) ? scores[i] : '';
-  });
-  const txt = document.getElementById('evalComment');
-  if(txt) txt.value = comment || '';
-  updatePreviewTotal();
-}
-
-function updatePreviewTotal() {
-  const scores = (appData.criteria || []).map((_, i) => {
-    const val = document.getElementById(`sc_${i}`)?.value;
-    return (val === '' || val === null) ? null : Number(val);
-  });
-  const total = calculateWeighted(scores);
-  const el = document.getElementById('previewTotal');
-  if(el) el.textContent = fmtPct(total);
-}
-
-function submitEvaluation() {
-  const id = Number(document.getElementById('selMember')?.value);
-  const type = document.getElementById('evalType')?.value;
-  const pin = document.getElementById('leaderPin')?.value;
-  const comment = document.getElementById('evalComment')?.value;
-  if(!id) { showNotification("Vui lòng chọn thành viên!", "err"); return; }
-  
-  if(type === 'leader' && pin !== LEADER_PIN) {
-    showNotification("Mã PIN nhóm trưởng không chính xác (Mặc định: 1234)!", "err");
-    return;
-  }
-
-  const scores = (appData.criteria || []).map((_, i) => {
-    const val = document.getElementById(`sc_${i}`)?.value;
-    return (val === '' || val === null) ? null : Number(val);
-  });
-
-  const total = calculateWeighted(scores);
-  const m = (appData.members || []).find(x => x.id === id);
-  if(!m) return;
-
-  if(type === 'leader') {
-    m.leaderScores = scores;
-    m.leaderTotal = total;
-    m.leaderComment = comment;
-  } else {
-    m.selfScores = scores;
-    m.selfTotal = total;
-    m.selfComment = comment;
-  }
-
-  if(m.selfTotal !== null && m.leaderTotal !== null) {
-    m.difference = Math.round((m.leaderTotal - m.selfTotal) * 10) / 10;
-  }
-
-  showNotification("Đã cập nhật điểm thành công! Hãy bấm 'Lưu & Đồng bộ Trực tuyến' ở góc trái.", "ok");
-}
-
-// Khởi chạy khi load trang
-window.onload = () => {
-  fetchOnlineData();
-};
-</script>
-</body>
-</html>
