@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workspace Dự án Thuyết trình & Đánh giá Thành viên</title>
+<style>
+:root {
+  --bg: #fafaf8; --sf: #ffffff; --tx: #1c1c1e; --mu: #6b6b70; --bd: #e4e4e0;
+  --ac: #1d4ed8; --acb: #e8eefc; --ok: #e6f2ea; --okt: #1f6b3a;
+  --wn: #fdf3dc; --wnt: #8a5a00; --er: #fbe8e6; --ert: #b3261e;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--tx);
+  font: 14px/1.5 system-ui, -apple-system, sans-serif; display: flex; min-height: 100vh;
+}
+aside {
+  width: 260px; background: var(--sf); border-right: 1px solid var(--bd);
+  padding: 18px 12px; position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+aside h1 { font-size: 14px; margin: 0 8px 4px; font-weight: 700; }
+aside small { display: block; color: var(--mu); font-size: 12px; margin-bottom: 16px; }
+.nav-group { margin-bottom: 14px; }
+.nav-title { font-size: 11px; text-transform: uppercase; color: var(--mu); font-weight: 600; padding: 4px 8px; }
+nav button {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+  background: none; border: 0; padding: 8px 10px; border-radius: 6px;
+  color: var(--mu); font: inherit; cursor: pointer; margin-bottom: 2px;
+}
+nav button:hover { background: var(--bg); color: var(--tx); }
+nav button.on { background: var(--acb); color: var(--ac); font-weight: 600; }
+main { flex: 1; min-width: 0; padding: 28px 32px; max-width: 1180px; }
+h2 { font-size: 20px; margin: 0 0 4px; font-weight: 700; }
+.sub { color: var(--mu); margin: 0 0 20px; font-size: 13px; }
+h3 { font-size: 15px; margin: 22px 0 10px; font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.box { background: var(--sf); border: 1px solid var(--bd); border-radius: 8px; padding: 16px; }
+.lbl { font-size: 12px; color: var(--mu); margin-bottom: 4px; }
+.big { font-size: 22px; font-weight: 700; }
+.wrap { overflow-x: auto; background: var(--sf); border: 1px solid var(--bd); border-radius: 8px; margin-bottom: 16px; }
+table { border-collapse: collapse; width: 100%; min-width: 820px; }
+th { font-size: 12px; color: var(--mu); text-align: left; font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--bd); background: var(--sf); white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid var(--bd); vertical-align: middle; }
+tr:last-child td { border-bottom: 0; }
+input, select, textarea { font: inherit; color: inherit; background: var(--sf); border: 1px solid var(--bd); border-radius: 6px; padding: 6px 9px; width: 100%; }
+input:focus, select:focus, textarea:focus { outline: 0; border-color: var(--ac); }
+textarea { resize: vertical; min-height: 60px; }
+input[type=number] { width: 75px; }
+input[type=date] { min-width: 130px; }
+.bar { height: 6px; background: var(--bd); border-radius: 3px; overflow: hidden; margin-top: 4px; min-width: 80px; }
+.bar i { display: block; height: 100%; background: var(--ac); border-radius: 3px; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; background: var(--bg); border: 1px solid var(--bd); white-space: nowrap; }
+.t-ok { background: var(--ok); color: var(--okt); border-color: transparent; }
+.t-wn { background: var(--wn); color: var(--wnt); border-color: transparent; }
+.t-er { background: var(--er); color: var(--ert); border-color: transparent; }
+.t-ac { background: var(--acb); color: var(--ac); border-color: transparent; }
+.btn {
+  background: var(--sf); border: 1px solid var(--bd); border-radius: 6px; padding: 7px 14px;
+  font: inherit; color: var(--tx); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500;
+}
+.btn:hover { border-color: var(--ac); color: var(--ac); }
+.btn.p { background: var(--ac); color: #fff; border-color: var(--ac); }
+.btn.p:hover { opacity: 0.9; }
+.x { color: var(--mu); cursor: pointer; background: none; border: 0; font-size: 18px; line-height: 1; }
+.x:hover { color: var(--ert); }
+.tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; align-items: center; }
+.tools input, .tools select { width: auto; }
+.alert { border-left: 3px solid var(--ac); background: var(--acb); color: var(--ac); padding: 12px 16px; border-radius: 0 6px 6px 0; margin-bottom: 16px; }
+.alert.err { border-color: var(--ert); background: var(--er); color: var(--ert); }
+.alert.ok { border-color: var(--okt); background: var(--ok); color: var(--okt); }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.f { display: grid; grid-template-columns: 160px 1fr; gap: 10px 12px; align-items: center; }
+.f label { color: var(--mu); font-size: 13px; }
+.score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.chk-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--bd); }
+@media (max-width: 760px) {
+  body { display: block; }
+  aside { position: static; width: auto; height: auto; border: 0; border-bottom: 1px solid var(--bd); padding: 12px; }
+  nav { display: flex; overflow-x: auto; gap: 4px; }
+  nav button { white-space: nowrap; width: auto; font-size: 12px; padding: 6px 10px; }
+  main { padding: 18px 14px; }
+  .f { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<aside>
+  <h1>Workspace Dự án<small>Thuyết trình & Đánh giá Nhóm</small></h1>
+  <nav id="nav"></nav>
+  
+  <div style="margin-top:auto; padding-top:16px; border-top: 1px solid var(--bd); display:flex; flex-direction:column; gap:8px;">
+    <button class="btn p" onclick="saveLocalData()" style="width:100%; justify-content:center;">💾 Lưu thay đổi</button>
+  </div>
+</aside>
+<main id="main">
+  <div class="box" style="text-align:center; padding:40px;">Đang tải giao diện...</div>
+</main>
+<script>
+const STORAGE_KEY = "ws_project_full_cache_v4";
+const LEADER_PIN = "1234";
+
+const DEFAULT_MEMBERS = [
+  { id: 1, name: "Vũ Huỳnh Ái Chi", role: "Trưởng nhóm + Thuyết trình 01", tasks: "Điều phối nhóm, theo dõi tiến độ, kiểm tra sản phẩm cuối.", pct: 90, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 2, name: "Nguyễn Kim Yến", role: "Nội dung 01 · Lịch sử & Nguồn gốc", tasks: "Tìm bối cảnh ra đời, nguồn gốc tên gọi, mốc thời gian.", pct: 85, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 3, name: "Nguyễn Thị Quỳnh Chi", role: "Nội dung 02 · Đặc điểm kiến trúc", tasks: "Nghiên cứu kiến trúc, cảnh quan, hạng mục, hiện vật.", pct: 80, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 4, name: "Lê Trần Hiển Chi", role: "Nội dung 03 · Giá trị văn hóa", tasks: "Làm rõ giá trị lịch sử, văn hóa đối với cộng đồng.", pct: 75, rating: "Đạt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 5, name: "Nguyễn Quỳnh Giang", role: "Nội dung 04 · Hiện trạng & Bảo tồn", tasks: "Tìm hiểu hiện trạng, công tác bảo tồn và thách thức.", pct: 70, rating: "Đạt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 6, name: "Trần Minh Châu", role: "Nội dung 05 · Tương tác trực quan", tasks: "Thiết kế hoạt động tương tác ngắn, phối hợp làm slide.", pct: 80, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 7, name: "Trương Thuỷ Dương", role: "Kiểm chứng nguồn 01", tasks: "Đối chiếu dữ liệu, mốc thời gian, tên riêng, số liệu.", pct: 85, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 8, name: "Phạm Khánh Ngân", role: "Kiểm chứng nguồn 02", tasks: "Lưu link/tài liệu, chuẩn hóa danh mục tham khảo.", pct: 85, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 9, name: "Trần Uyên Trang", role: "Tìm kiếm hình ảnh HD", tasks: "Tìm và chọn ảnh, bản đồ, video tư liệu minh họa.", pct: 90, rating: "Xuất sắc", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 10, name: "Nguyễn Trần Đình Quân", role: "Thiết kế slide 01 · Bố cục", tasks: "Xây dựng layout, typography và visual hierarchy.", pct: 85, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 11, name: "Cao Đức Duy", role: "Thiết kế slide 02 · Hoàn thiện", tasks: "Xử lý hình ảnh, biểu đồ, rà soát tính nhất quán.", pct: 80, rating: "Tốt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" },
+  { id: 12, name: "Nguyễn Minh Thiên Phúc", role: "Thuyết trình 02", tasks: "Xây dựng kịch bản nói, luyện tập dưới 10 phút.", pct: 75, rating: "Đạt", signed: true, selfScores: null, leaderScores: null, selfTotal: null, leaderTotal: null, difference: null, selfComment: "", leaderComment: "" }
+];
+
+let appData = {
+  pstatus: "Đang thực hiện",
+  updated: "Vừa xong",
+  info: {
+    topic: "Giới thiệu di tích lịch sử – văn hóa / danh lam thắng cảnh Việt Nam",
+    date: "2026-10-14",
+    deadline: "2026-10-13",
+    teacher: "Giáo viên hướng dẫn",
+    leader: "Vũ Huỳnh Ái Chi",
+    link: ""
+  },
+  criteria: [
+    { name: "Khối lượng & Tiến độ công việc", weight: 25 },
+    { name: "Chất lượng sản phẩm / Nội dung", weight: 20 },
+    { name: "Mức độ chủ động & Kỷ luật", weight: 15 },
+    { name: "Hợp tác & Tương tác nhóm", weight: 15 },
+    { name: "Sáng tạo & Cải tiến sản phẩm", weight: 10 },
+    { name: "Kỹ năng thuyết trình / Đóng góp", weight: 15 }
+  ],
+  members: DEFAULT_MEMBERS,
+  tasks: DEFAULT_MEMBERS.map(m => ({
+    name: m.role.split('·')[0].trim(),
+    owner: m.name,
+    deadline: "2026-10-13",
+    status: "Đang thực hiện",
+    pct: m.pct,
+    note: m.tasks
+  })),
+  notes: [
+    { time: "21:01 10/10/2026", author: "Vũ Huỳnh Ái Chi", text: "Thống nhất thời lượng bài thuyết trình tối đa 10 phút, phân chia rõ vai trò từng thành viên." }
+  ],
+  checks: {}
+};
+
+try {
+  const cached = localStorage.getItem(STORAGE_KEY);
+  if (cached) {
+    appData = JSON.parse(cached);
+  }
+} catch(e) {}
+
+let currentPage = (location.hash || '#ov').slice(1);
+let taskFilter = { owner: "", status: "" };
+let memberSearchQuery = "";
+const STATUS_LIST = ["Chưa bắt đầu", "Đang thực hiện", "Chờ kiểm tra", "Đã hoàn thành", "Trễ hạn"];
+const PROJECT_STATUS = ["Chưa bắt đầu", "Đang thực hiện", "Đang kiểm tra", "Hoàn thành"];
+
+const pad = n => String(n).padStart(2, "0");
+const iso = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const nowStr = () => { const d = new Date(); return iso(d) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+const esc = s => String(s ?? '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const fmtPct = v => (v === null || v === undefined || v === '') ? '—' : Number(v).toFixed(1) + '%';
+const todayStr = () => iso(new Date());
+
+const calculateWeighted = (scores) => {
+  if (!scores || !appData.criteria || scores.length !== appData.criteria.length) return null;
+  if (scores.some(v => v === null || v === '' || isNaN(v))) return null;
+  const total = scores.reduce((sum, v, i) => sum + Number(v) * appData.criteria[i].weight / 100, 0);
+  return Math.round(total * 10) / 10;
+};
+
+function saveLocalData() {
+  appData.updated = nowStr();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    showNotification("Đã lưu thay đổi thành công vào trình duyệt!", "ok");
+  } catch(e) {
+    showNotification("Lỗi khi lưu dữ liệu!", "err");
+  }
+}
+
+function showNotification(msg, type) {
+  const el = document.getElementById('globalMsg');
+  if(el) {
+    el.innerHTML = `<div class="alert ${type}">${msg}</div>`;
+    setTimeout(() => { el.innerHTML = ''; }, 4000);
+  }
+}
+
+const NAVIGATION = [
+  { group: "Dự án & Nội dung", items: [['ov', '📊 Tổng quan dự án'], ['info', '📖 Nội dung & Thông tin'], ['tasks', '📋 Quản lý công việc'], ['mem', '👥 Phân công thành viên']] },
+  { group: "Đánh giá đóng góp", items: [['matrix', '🎯 Bảng điểm chung'], ['details', '🔍 Chi tiết đánh giá'], ['form', '✏️ Nhập điểm đánh giá'], ['rubric', '📏 Tiêu chí Rubric']] },
+  { group: "Quy trình & Kiểm tra", items: [['dl_rules', '⏰ Deadline & Quy tắc'], ['chk', '✅ Checklist thuyết trình'], ['notes', '📝 Ghi chú & Nhật ký']] }
+];
+
+const getEffectiveStatus = (task) => {
+  if (task.pct >= 100 || task.status === "Đã hoàn thành") return "Đã hoàn thành";
+  if (task.deadline && task.deadline < todayStr()) return "Trễ hạn";
+  return task.status;
+};
+
+const VIEWS = {
+  ov() {
+    const ts = appData.tasks || [];
+    const avgPct = ts.length ? Math.round(ts.reduce((acc, t) => acc + (Number(t.pct) || 0), 0) / ts.length) : 0;
+    const totalMem = (appData.members || []).length;
+    const selfDone = (appData.members || []).filter(m => m.selfTotal !== null).length;
+    const leaderDone = (appData.members || []).filter(m => m.leaderTotal !== null).length;
+    return `
+      <h2>Tổng quan dự án & Đánh giá</h2>
+      <p class="sub">${esc(appData.info?.topic || "Thuyết trình nhóm")}</p>
+      <div id="globalMsg"></div>
+      <div class="grid">
+        <div class="box">
+          <div class="lbl">Tiến độ công việc</div>
+          <div class="big">${avgPct}%</div>
+          <div class="bar"><i style="width:${avgPct}%"></i></div>
+        </div>
+        <div class="box">
+          <div class="lbl">Trạng thái dự án</div>
+          <select style="font-weight:600;" onchange="appData.pstatus=this.value;">
+            ${PROJECT_STATUS.map(s => `<option value="${s}" ${s === appData.pstatus ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </div>
+        <div class="box">
+          <div class="lbl">Tự đánh giá xong</div>
+          <div class="big">${selfDone} / ${totalMem}</div>
+          <div class="bar"><i style="width:${totalMem ? (selfDone/totalMem*100) : 0}%"></i></div>
+        </div>
+        <div class="box">
+          <div class="lbl">Nhóm trưởng đã chấm</div>
+          <div class="big">${leaderDone} / ${totalMem}</div>
+          <div class="bar"><i style="width:${totalMem ? (leaderDone/totalMem*100) : 0}%"></i></div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="box">
+          <h3>⚡ Hướng dẫn nhanh cho nhóm</h3>
+          <p class="lbl">1. Chỉnh sửa trực tiếp các thông tin trên các mục menu trái.</p>
+          <p class="lbl">2. Vào mục <b>✏️ Nhập điểm đánh giá</b> để tự chấm điểm cá nhân.</p>
+          <p class="lbl">3. Bấm nút <b>💾 Lưu thay đổi</b> ở góc trái để ghi nhớ ngay lập tức.</p>
+        </div>
+        <div class="box">
+          <h3>🎯 Thành viên nhóm trưởng</h3>
+          <p class="lbl">Nhóm trưởng (Vũ Huỳnh Ái Chi) dùng mã PIN <b>1234</b> để chấm điểm tổng kết.</p>
+          <button class="btn p" onclick="switchPage('form')" style="margin-top:8px">Đến trang Nhập điểm ngay</button>
+        </div>
+      </div>
+    `;
+  },
+  info() {
+    const info = appData.info || {};
+    return `
+      <h2>Nội dung & Thông tin dự án</h2>
+      <p class="sub">Thiết lập thông tin chung bài thuyết trình</p>
+      <div id="globalMsg"></div>
+      <div class="box f" style="margin-bottom:16px">
+        <label>Chủ đề</label><input value="${esc(info.topic)}" onchange="appData.info.topic=this.value">
+        <label>Ngày thuyết trình</label><input type="date" value="${info.date || ''}" onchange="appData.info.date=this.value">
+        <label>Deadline chung</label><input type="date" value="${info.deadline || ''}" onchange="appData.info.deadline=this.value">
+        <label>Giáo viên</label><input value="${esc(info.teacher)}" onchange="appData.info.teacher=this.value">
+        <label>Trưởng nhóm</label><input value="${esc(info.leader)}" onchange="appData.info.leader=this.value">
+      </div>
+    `;
+  },
+  tasks() {
+    let list = (appData.tasks || []).filter(t => {
+      return (!taskFilter.owner || t.owner === taskFilter.owner) && (!taskFilter.status || getEffectiveStatus(t) === taskFilter.status);
+    });
+    const owners = [...new Set([...(appData.members || []).map(m => m.name), "Cả nhóm"])];
+    return `
+      <h2>Quản lý công việc</h2>
+      <p class="sub">Phân công nhiệm vụ chi tiết</p>
+      <div id="globalMsg"></div>
+      <div class="tools">
+        <select onchange="taskFilter.owner=this.value; renderMain();">
+          <option value="">-- Mọi người --</option>
+          ${owners.map(o => `<option value="${esc(o)}" ${taskFilter.owner === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+        </select>
+        <button class="btn p" onclick="addTask()">➕ Thêm việc</button>
+      </div>
+      <div class="wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:220px">Công việc</th>
+              <th style="width:170px">Phụ trách</th>
+              <th style="width:130px">Deadline</th>
+              <th style="width:140px">Trạng thái</th>
+              <th style="width:110px">Tiến độ</th>
+              <th>Ghi chú</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map((t, idx) => {
+              const realIdx = appData.tasks.indexOf(t);
+              return `
+                <tr>
+                  <td><input value="${esc(t.name)}" oninput="appData.tasks[${realIdx}].name=this.value"></td>
+                  <td>
+                    <select onchange="appData.tasks[${realIdx}].owner=this.value">
+                      <option value="">(Chưa giao)</option>
+                      ${owners.map(o => `<option value="${esc(o)}" ${t.owner === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td><input type="date" value="${t.deadline || ''}" onchange="appData.tasks[${realIdx}].deadline=this.value"></td>
+                  <td>
+                    <select onchange="appData.tasks[${realIdx}].status=this.value">
+                      ${STATUS_LIST.map(s => `<option value="${s}" ${t.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td><input type="number" min="0" max="100" value="${t.pct}" oninput="appData.tasks[${realIdx}].pct=Number(this.value)">%</td>
+                  <td><input value="${esc(t.note)}" oninput="appData.tasks[${realIdx}].note=this.value"></td>
+                  <td><button class="x" onclick="appData.tasks.splice(${realIdx},1); renderMain();">&times;</button></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  },
+  mem() {
+    return `
+      <h2>Phân công thành viên</h2>
+      <p class="sub">Danh sách 12 thành viên chính thức</p>
+      <div id="globalMsg"></div>
+      <div class="wrap">
+        <table>
+          <thead><tr><th>STT</th><th>Họ và tên</th><th>Vai trò</th><th>Nhiệm vụ cụ thể</th><th>Tiến độ</th><th>Xác nhận</th></tr></thead>
+          <tbody>
+            ${(appData.members || []).map((m, idx) => `
+              <tr>
+                <td><b>${m.id || idx + 1}</b></td>
+                <td><input value="${esc(m.name)}" onchange="appData.members[${idx}].name=this.value"></td>
+                <td><input value="${esc(m.role)}" onchange="appData.members[${idx}].role=this.value"></td>
+                <td><textarea onchange="appData.members[${idx}].tasks=this.value">${esc(m.tasks)}</textarea></td>
+                <td><input type="number" min="0" max="100" value="${m.pct}" onchange="appData.members[${idx}].pct=Number(this.value)">%</td>
+                <td><input type="checkbox" ${m.signed ? 'checked' : ''} onchange="appData.members[${idx}].signed=this.checked"> Đã ký</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  },
+  matrix() {
+    return `
+      <h2>Bảng điểm chung đối chiếu</h2>
+      <p class="sub">So sánh tự đánh giá và điểm nhóm trưởng</p>
+      <div id="globalMsg"></div>
+      <div class="tools"><input placeholder="🔍 Tìm kiếm..." value="${esc(memberSearchQuery)}" oninput="memberSearchQuery=this.value; renderMain();"></div>
+      <div class="wrap">
+        <table>
+          <thead><tr><th>STT</th><th>Thành viên & Vị trí</th><th>Tự đánh giá</th><th>Nhóm trưởng</th><th>Chênh lệch</th><th>Thao tác</th></tr></thead>
+          <tbody>
+            ${(appData.members || []).filter(m => (m.name + ' ' + m.role).toLowerCase().includes(memberSearchQuery.toLowerCase())).map(m => {
+              const diff = m.difference === null ? '—' : (m.difference > 0 ? '+' : '') + Number(m.difference).toFixed(1) + '%';
+              return `
+                <tr>
+                  <td><b>${m.id}</b></td>
+                  <td><b>${esc(m.name)}</b><div class="lbl">${esc(m.role)}</div></td>
+                  <td><b>${fmtPct(m.selfTotal)}</b></td>
+                  <td><b>${fmtPct(m.leaderTotal)}</b></td>
+                  <td><span class="tag">${diff}</span></td>
+                  <td><button class="btn" style="padding:4px 8px" onclick="goToEval(${m.id})">✏️ Chấm</button></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  },
+  details() {
+    return `
+      <h2>Chi tiết đánh giá tiêu chí</h2>
+      <p class="sub">Thanh trên: Tự đánh giá | Thanh dưới: Nhóm trưởng</p>
+      <div id="globalMsg"></div>
+      <div class="cols">
+        ${(appData.members || []).map(m => `
+          <div class="box">
+            <h3 style="margin:0 0 4px">${esc(m.name)}</h3>
+            <div class="lbl" style="margin-bottom:10px">${esc(m.role)}</div>${(appData.criteria || []).map((c, i) => {
+              const s = m.selfScores ? m.selfScores[i] : null;
+              const l = m.leaderScores ? m.leaderScores[i] : null;
+              return `
+                <div style="font-size:12px; margin-bottom:6px">
+                  <span>${esc(c.name)}: <b>${s ?? '—'} / ${l ?? '—'}</b></span>
+                  <div class="bar"><i style="width:${s ?? 0}%"></i></div>
+                  <div class="bar" style="margin-top:2px"><i style="width:${l ?? 0}%; background:var(--mu)"></i></div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  },
+  form() {
+    return `
+      <h2>Nhập / Cập nhật đánh giá</h2>
+      <p class="sub">Nhập điểm 6 tiêu chí (0 - 100)</p>
+      <div id="globalMsg"></div>
+      <div class="box">
+        <div class="f" style="margin-bottom:12px">
+          <label>Chọn thành viên</label>
+          <select id="selMember" onchange="loadFormExisting()">
+            <option value="">-- Chọn thành viên --</option>
+            ${(appData.members || []).map(m => `<option value="${m.id}">${m.id}. ${esc(m.name)} (${esc(m.role)})</option>`).join('')}
+          </select>
+        </div>
+        <div class="f" style="margin-bottom:12px">
+          <label>Loại đánh giá</label>
+          <select id="evalType" onchange="togglePin(); loadFormExisting();">
+            <option value="self">Tự đánh giá</option>
+            <option value="leader">Đánh giá của Nhóm trưởng</option>
+          </select>
+        </div>
+        <div class="f" id="pinRow" style="display:none; margin-bottom:12px">
+          <label>Mã PIN nhóm trưởng</label>
+          <input type="password" id="leaderPin" placeholder="Mã mặc định: 1234">
+        </div>
+        <div class="score-grid" style="margin-bottom:16px">
+          ${(appData.criteria || []).map((c, i) => `
+            <div>
+              <div class="lbl">${esc(c.name)} (${c.weight}%)</div>
+              <input type="number" id="sc_${i}" min="0" max="100" placeholder="0-100" oninput="updatePreviewTotal()">
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-bottom:16px">
+          <div class="lbl">Nhận xét / Minh chứng</div>
+          <textarea id="evalComment" placeholder="Nêu rõ sản phẩm đã làm..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div><b>Tổng điểm dự kiến: </b><span id="previewTotal" class="big" style="color:var(--ac)">—</span></div>
+          <button class="btn p" onclick="submitEvaluation()">💾 Lưu điểm cá nhân</button>
+        </div>
+      </div>
+    `;
+  },
+  rubric() {
+    return `
+      <h2>Bộ tiêu chí & Trọng số đánh giá</h2>
+      <p class="sub">Áp dụng nhất quán cho cả tự đánh giá và Nhóm trưởng chấm điểm</p>
+      <div id="globalMsg"></div>
+      <div class="wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px">#</th>
+              <th style="width:240px">Tên tiêu chí</th>
+              <th style="width:90px">Trọng số</th>
+              <th>Mô tả chi tiết & Hướng dẫn chấm điểm</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(appData.criteria || []).map((c, i) => {
+              const descs = [
+                "Đạt 100% khối lượng công việc đúng hạn. Trừ 10-20% điểm cho mỗi lần trễ hạn không lý do.",
+                "Sản phẩm chuẩn xác, không lỗi chính tả/kiến thức, trích dẫn rõ ràng, bố cục trực quan.",
+                "Chủ động báo cáo tiến độ, tự giác nhận việc, tuân thủ kỷ luật chung của nhóm.",
+                "Tương tác tích cực, phản hồi tin nhắn dưới 4h, sẵn sàng hỗ trợ đồng đội khi quá tải.",
+                "Đề xuất ý tưởng mới, thiết kế ấn tượng hoặc có sáng kiến làm bài thuyết trình sinh động.",
+                "Nói lưu khoát, làm chủ thời gian dưới 10 phút, tự tin, tương tác tốt với khán giả."
+              ];
+              return `
+                <tr>
+                  <td><b>${i + 1}</b></td>
+                  <td><b>${esc(c.name)}</b></td>
+                  <td><span class="tag t-ac">${c.weight}%</span></td>
+                  <td style="font-size:13px; color:var(--mu);">${descs[i] || 'Chấm theo thang 0 – 100.'}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  },
+  dl_rules() {
+    return `
+      <h2>Deadline & Quy tắc làm việc</h2>
+      <p class="sub">Nguyên tắc hợp tác minh bạch, trách nhiệm và tôn trọng lẫn nhau</p>
+      <div id="globalMsg"></div>
+      <div class="cols">
+        <div class="box">
+          <h3 style="margin-top:0">⏱️ Quy định xử lý trễ hạn Deadline</h3>
+          <ul style="padding-left:18px; line-height:1.7; margin-bottom:0;">
+            <li><b>Đúng hạn:</b> Hoàn thành sản phẩm đạt yêu cầu trước hoặc đúng ngày deadline.</li>
+            <li><b>Có nguy cơ trễ:</b> Phải báo cho nhóm trưởng <b>trước deadline tối thiểu 12 tiếng</b>.</li>
+            <li><b>Trễ không báo trước:</b> Trừ trực tiếp điểm kỷ luật và hợp tác nhóm.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3 style="margin-top:0">🤝 Quy tắc giao tiếp & Làm việc nhóm</h3>
+          <ul style="padding-left:18px; line-height:1.7; margin-bottom:0;">
+            <li>Trả lời tin nhắn nhóm trong vòng 4 tiếng đối với các thông báo quan trọng.</li>
+            <li>Tự giác cập nhật tiến độ công việc trên Workspace này.</li>
+            <li>Mọi ý kiến đóng góp mang tính xây dựng, tôn trọng khác biệt.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+  },
+  chk() {
+    const checks = appData.checks || {};
+    const CHECKLIST_SECTIONS = [
+      ["Nội dung bài viết", ["Nội dung đã hoàn thành đầy đủ", "Thông tin lịch sử / văn hóa đã kiểm chứng", "Trích dẫn nguồn tư liệu rõ ràng", "Các mục theo đúng cấu trúc 10 phút"]],
+      ["Slide thuyết trình", ["Slide thiết kế trực quan, sạch đẹp", "Hình ảnh sắc nét, có bản quyền/chất lượng cao", "Màu sắc, phông chữ nhất quán", "Liên kết mượt mà giữa các phần"]],
+      ["Luyện tập thuyết trình", ["Đã phân chia người thuyết trình cụ thể", "Đã tổng duyệt bấm giờ toàn nhóm", "Khung thời gian đảm bảo tối đa 10 phút", "Chuẩn bị trước các câu hỏi phản biện"]],
+      ["Trước giờ G", ["Đã kiểm tra kỹ lỗi chính tả", "Đã chạy thử slide trên máy chiếu/kết nối", "Sao lưu slide lên Drive & USB dự phòng", "Thành viên hiểu rõ vai trò của mình"]]
+    ];
+    return `
+      <h2>Checklist kiểm tra trước thuyết trình</h2>
+      <p class="sub">Rà soát lại toàn bộ công tác chuẩn bị trước khi lên sàn</p>
+      <div id="globalMsg"></div>
+      <div class="cols">
+        ${CHECKLIST_SECTIONS.map((sec, sIdx) => `
+          <div class="box">
+            <h3 style="margin-top:0">${sec[0]}</h3>
+            <div>
+              ${sec[1].map((item, iIdx) => {
+                const key = `chk_${sIdx}_${iIdx}`;
+                const isChecked = !!checks[key];
+                return `
+                  <div class="chk-item">
+                    <input type="checkbox" id="${key}" ${isChecked ? 'checked' : ''} onchange="appData.checks['${key}']=this.checked;">
+                    <label for="${key}" style="cursor:pointer;">${esc(item)}</label>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  },
+  notes() {
+    return `
+      <h2>Ghi chú & Nhật ký dự án</h2>
+      <p class="sub">Lưu trữ các thông báo và thống nhất cuộc họp</p>
+      <div id="globalMsg"></div>
+      <div class="box" style="margin-bottom:16px;">
+        <h3 style="margin-top:0">Thêm ghi chú mới</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <input id="nAuthor" placeholder="Tên người viết (VD: Vũ Huỳnh Ái Chi)" style="width:220px">
+          <input id="nText" placeholder="Nội dung ghi chú..." style="flex:1; min-width:240px;">
+          <button class="btn p" onclick="addNote()">📝 Thêm ghi chú</button>
+        </div>
+      </div>
+      <div class="wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:160px">Thời gian</th>
+              <th style="width:180px">Người viết</th>
+              <th>Nội dung ghi chú</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(appData.notes || []).map((n, idx) => `
+              <tr>
+                <td style="font-size:12px; color:var(--mu);">${esc(n.time)}</td>
+                <td><b>${esc(n.author)}</b></td>
+                <td>${esc(n.text)}</td>
+                <td><button class="x" onclick="appData.notes.splice(${idx},1); renderMain();">&times;</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+};
+
+function renderNav() {
+  const navEl = document.getElementById('nav');
+  if (!navEl) return;
+  navEl.innerHTML = NAVIGATION.map(g => `
+    <div class="nav-group">
+      <div class="nav-title">${g.group}</div>
+      ${g.items.map(it => `<button onclick="switchPage('${it[0]}')" class="${it[0]===currentPage?'on':''}">${it[1]}</button>`).join('')}
+    </div>
+  `).join('');
+}
+
+function renderMain() {
+  const mainEl = document.getElementById('main');
+  if (!mainEl) return;
+  const fn = VIEWS[currentPage] || VIEWS.ov;
+  mainEl.innerHTML = fn();
+}
+
+function render() {
+  renderNav();
+  renderMain();
+}
+
+function switchPage(p) {
+  currentPage = p;
+  location.hash = p;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function addTask() {
+  if(!appData.tasks) appData.tasks = [];
+  appData.tasks.unshift({ name: "Nhiệm vụ mới", owner: "", deadline: iso(new Date()), status: "Chưa bắt đầu", pct: 0, note: "" });
+  renderMain();
+}
+
+function goToEval(id) {
+  switchPage('form');
+  setTimeout(() => { const sel = document.getElementById('selMember'); if(sel) { sel.value = id; loadFormExisting(); } }, 50);
+}
+
+function togglePin() {
+  const row = document.getElementById('pinRow');
+  const type = document.getElementById('evalType')?.value;
+  if(row) row.style.display = (type === 'leader') ? 'grid' : 'none';
+}
+
+function loadFormExisting() {
+  const id = Number(document.getElementById('selMember')?.value);
+  const type = document.getElementById('evalType')?.value;
+  if(!id) return;
+  const m = (appData.members || []).find(x => x.id === id);
+  if(!m) return;
+  const scores = (type === 'leader') ? m.leaderScores : m.selfScores;
+  const comment = (type === 'leader') ? m.leaderComment : m.selfComment;
+  (appData.criteria || []).forEach((_, i) => {
+    const input = document.getElementById(`sc_${i}`);
+    if(input) input.value = (scores && scores[i] !== null && scores[i] !== undefined) ? scores[i] : '';
+  });
+  const txt = document.getElementById('evalComment');
+  if(txt) txt.value = comment || '';
+  updatePreviewTotal();
+}
+
+function updatePreviewTotal() {
+  const scores = (appData.criteria || []).map((_, i) => {
+    const val = document.getElementById(`sc_${i}`)?.value;
+    return (val === '' || val === null) ? null : Number(val);
+  });
+  const total = calculateWeighted(scores);
+  const el = document.getElementById('previewTotal');
+  if(el) el.textContent = fmtPct(total);
+}
+
+function submitEvaluation() {
+  const id = Number(document.getElementById('selMember')?.value);
+  const type = document.getElementById('evalType')?.value;
+  const pin = document.getElementById('leaderPin')?.value;
+  const comment = document.getElementById('evalComment')?.value;
+  
+  if(!id) { showNotification("Vui lòng chọn thành viên!", "err"); return; }
+  if(type === 'leader' && pin !== LEADER_PIN) {
+    showNotification("Mã PIN nhóm trưởng không đúng! (Mặc định: 1234)", "err");
+    return;
+  }
+  
+  const scores = (appData.criteria || []).map((_, i) => {
+    const val = document.getElementById(`sc_${i}`)?.value;
+    return (val === '' || val === null) ? null : Number(val);
+  });
+  
+  if(scores.some(v => v === null || isNaN(v))) {
+    showNotification("Vui lòng nhập đầy đủ điểm các tiêu chí (0 - 100)!", "err");
+    return;
+  }
+  
+  const total = calculateWeighted(scores);
+  const m = (appData.members || []).find(x => x.id === id);
+  if(m) {
+    if(type === 'leader') {
+      m.leaderScores = scores;
+      m.leaderTotal = total;
+      m.leaderComment = comment;
+    } else {
+      m.selfScores = scores;
+      m.selfTotal = total;
+      m.selfComment = comment;
+    }
+    
+    if(m.selfTotal !== null && m.leaderTotal !== null) {
+      m.difference = Math.round((m.selfTotal - m.leaderTotal) * 10) / 10;
+    }
+  }
+  
+  saveLocalData();
+  showNotification("Đã lưu điểm thành công!", "ok");
+}
+
+function addNote() {
+  const author = document.getElementById('nAuthor')?.value.trim();
+  const text = document.getElementById('nText')?.value.trim();
+  if(!author || !text) { showNotification("Vui lòng nhập đầy đủ tên và nội dung ghi chú!", "err"); return; }
+  if(!appData.notes) appData.notes = [];
+  appData.notes.unshift({ time: nowStr(), author, text });
+  renderMain();
+  showNotification("Đã thêm ghi chú mới!", "ok");
+}
+
+window.addEventListener('hashchange', () => {
+  const p = (location.hash || '#ov').slice(1);
+  if(VIEWS[p]) { currentPage = p; renderMain(); renderNav(); }
+});
+
+window.onload = () => {
+  render();
+};
+</script>
+</body>
+</html>
