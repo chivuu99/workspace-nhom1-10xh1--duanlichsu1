@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace Dự án Thuyết trình & Đánh giá Nhóm</title>
+<style>
+:root{--bg:#fafaf8;--sf:#fff;--tx:#1c1c1e;--mu:#6b6b70;--bd:#e4e4e0;--ac:#1d4ed8;--acb:#e8eefc;--ok:#e6f2ea;--okt:#1f6b3a;--wn:#fdf3dc;--wnt:#8a5a00;--er:#fbe8e6;--ert:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#161618;--sf:#202023;--tx:#ececee;--mu:#9a9aa2;--bd:#34343a;--ac:#7da2ff;--acb:#232c45;--ok:#1d3326;--okt:#7fd69b;--wn:#3a2f14;--wnt:#f0c36a;--er:#3b2220;--ert:#ff938b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,sans-serif;display:flex;min-height:100vh}
+aside{width:250px;background:var(--sf);border-right:1px solid var(--bd);padding:16px 12px;position:sticky;top:0;height:100vh;flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+aside h1{font-size:14px;margin:0 8px 2px}aside small{display:block;color:var(--mu);font-size:12px;margin:0 8px 14px}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;padding:8px 10px;border-radius:6px;color:var(--mu);font:inherit;cursor:pointer;margin-bottom:2px}
+nav button:hover{background:var(--bg);color:var(--tx)}nav button.on{background:var(--acb);color:var(--ac);font-weight:600}
+main{flex:1;min-width:0;padding:26px 30px;max-width:1180px}
+h2{font-size:20px;margin:0 0 4px}.sub{color:var(--mu);margin:0 0 18px;font-size:13px}h3{font-size:15px;margin:20px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.box{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:16px}
+.lbl{font-size:12px;color:var(--mu)}.big{font-size:22px;font-weight:700}
+.wrap{overflow-x:auto;background:var(--sf);border:1px solid var(--bd);border-radius:8px;margin-bottom:16px}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th{font-size:12px;color:var(--mu);text-align:left;padding:10px 12px;border-bottom:1px solid var(--bd);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}tr:last-child td{border-bottom:0}
+input,select,textarea{font:inherit;color:inherit;background:var(--sf);border:1px solid var(--bd);border-radius:6px;padding:6px 9px;width:100%}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--ac)}
+input[type=number]{width:80px}input[type=checkbox]{width:auto}textarea{resize:vertical;min-height:60px}
+.bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-top:4px;min-width:70px}.bar i{display:block;height:100%;background:var(--ac)}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:12px;background:var(--bg);border:1px solid var(--bd);white-space:nowrap}
+.t-ok{background:var(--ok);color:var(--okt);border-color:transparent}.t-wn{background:var(--wn);color:var(--wnt);border-color:transparent}.t-er{background:var(--er);color:var(--ert);border-color:transparent}.t-ac{background:var(--acb);color:var(--ac);border-color:transparent}
+.btn{background:var(--sf);border:1px solid var(--bd);border-radius:6px;padding:7px 14px;font:inherit;font-size:13px;font-weight:500;color:var(--tx);cursor:pointer}
+.btn:hover{border-color:var(--ac);color:var(--ac)}.btn.p{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.x{color:var(--mu);cursor:pointer;background:none;border:0;font-size:18px}.x:hover{color:var(--ert)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px;align-items:center}.tools input,.tools select{width:auto}
+.alert{border-left:3px solid var(--ac);background:var(--acb);color:var(--ac);padding:10px 14px;border-radius:0 6px 6px 0;margin-bottom:14px}
+.alert.err{border-color:var(--ert);background:var(--er);color:var(--ert)}.alert.ok{border-color:var(--okt);background:var(--ok);color:var(--okt)}
+.f{display:grid;grid-template-columns:160px 1fr;gap:10px 12px;align-items:center;max-width:720px}.f label{color:var(--mu);font-size:13px}
+.chk{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+#sync{margin-top:auto;padding-top:14px;border-top:1px solid var(--bd);font-size:12px;color:var(--mu)}#sync input{margin:6px 0;font-size:12px}
+@media(max-width:760px){body{display:block}aside{position:static;width:auto;height:auto;border:0;border-bottom:1px solid var(--bd)}nav{display:flex;overflow-x:auto;gap:4px}nav button{white-space:nowrap;width:auto}main{padding:16px 12px}.f{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside>
+  <h1>Workspace Dự án</h1><small>Thuyết trình & Đánh giá Nhóm</small>
+  <nav id="nav"></nav>
+  <div id="sync">
+    <b>☁️ Đồng bộ nhóm</b><br>
+    <input id="fburl" placeholder="https://ten-du-an-default-rtdb.firebaseio.com" onchange="setUrl(this.value)">
+    <div id="syncst">Chưa kết nối (chỉ lưu trên máy này)</div>
+  </div>
+</aside>
+<main id="main"><div class="box">Đang tải...</div></main>
+<script>
+const KEY="ws_project_v11", URLKEY="ws_fb_url", PIN="1234";
+const CHECKS=["Slide đã chốt, không lỗi font/hình","Kịch bản nói ≤ 10 phút, đã tập ít nhất 2 lần","Nguồn tài liệu & hình ảnh đã kiểm chứng","Có hoạt động tương tác trực quan","Mỗi thành viên nắm rõ phần của mình","Đã backup file (PDF + PPTX) ở nơi chung","Test thiết bị trình chiếu/âm thanh","Phân công người trả lời câu hỏi"];
+const STATUS=["Chưa bắt đầu","Đang thực hiện","Chờ kiểm tra","Đã hoàn thành","Trễ hạn"];
+const PSTATUS=["Chưa bắt đầu","Đang thực hiện","Đang kiểm tra","Hoàn thành"];
+const M=[
+["Vũ Huỳnh Ái Chi","Trưởng nhóm + Thuyết trình 01","Điều phối nhóm, theo dõi tiến độ, kiểm tra sản phẩm cuối.",90],
+["Nguyễn Kim Yến","Nội dung 01 · Lịch sử & Nguồn gốc","Tìm bối cảnh ra đời, nguồn gốc tên gọi, mốc thời gian.",85],
+["Nguyễn Thị Quỳnh Chi","Nội dung 02 · Đặc điểm kiến trúc","Nghiên cứu kiến trúc, cảnh quan, hạng mục, hiện vật.",80],
+["Lê Trần Hiển Chi","Nội dung 03 · Giá trị văn hóa","Làm rõ giá trị lịch sử, văn hóa đối với cộng đồng.",75],
+["Nguyễn Quỳnh Giang","Nội dung 04 · Hiện trạng & Bảo tồn","Tìm hiểu hiện trạng, công tác bảo tồn và thách thức.",70],
+["Trần Minh Châu","Nội dung 05 · Tương tác trực quan","Thiết kế hoạt động tương tác ngắn, phối hợp làm slide.",80],
+["Trương Thuỷ Dương","Kiểm chứng nguồn 01","Đối chiếu dữ liệu, mốc thời gian, tên riêng, số liệu.",85],
+["Phạm Khánh Ngân","Kiểm chứng nguồn 02","Lưu link/tài liệu, chuẩn hóa danh mục tham khảo.",85],
+["Trần Uyên Trang","Tìm kiếm hình ảnh HD","Tìm và chọn ảnh, bản đồ, video tư liệu minh họa.",90],
+["Nguyễn Trần Đình Quân","Thiết kế slide 01 · Bố cục","Xây dựng layout, typography và visual hierarchy.",85],
+["Cao Đức Duy","Thiết kế slide 02 · Hoàn thiện","Xử lý hình ảnh, biểu đồ, rà soát tính nhất quán.",80],
+["Nguyễn Minh Thiên Phúc","Thuyết trình 02","Xây dựng kịch bản nói, luyện tập dưới 10 phút.",75]];
+const fresh=()=>({
+  updated:0,pstatus:"Đang thực hiện",
+  info:{topic:"Giới thiệu di tích lịch sử – văn hóa / danh lam thắng cảnh Việt Nam",date:"2026-10-14",deadline:"2026-10-13",teacher:"Giáo viên hướng dẫn",leader:M[0][0],link:""},
+  criteria:[["Khối lượng & Tiến độ công việc",25],["Chất lượng sản phẩm / Nội dung",20],["Mức độ chủ động & Kỷ luật",15],["Hợp tác & Tương tác nhóm",15],["Sáng tạo & Cải tiến sản phẩm",10],["Kỹ năng thuyết trình / Đóng góp",15]].map(c=>({name:c[0],weight:c[1]})),
+  members:M.map((m,i)=>({id:i+1,name:m[0],role:m[1],tasks:m[2],pct:m[3],signed:true,self:null,leader:null,selfC:"",leaderC:"",ts:0})),
+  tasks:M.map((m,i)=>({id:i+1,name:m[1].split("·")[0].trim(),owner:m[0],deadline:"2026-10-13",status:"Đang thực hiện",pct:m[3],note:m[2],ts:0})),
+  notes:[{time:"2026-10-10 21:01",author:M[0][0],text:"Thống nhất thời lượng tối đa 10 phút, phân chia rõ vai trò từng thành viên."}],
+  checks:{}
+});
+let D=fresh(),page=(location.hash||"#ov").slice(1),F={owner:"",status:""},Q="",fbUrl="",pinOk=false,timer;
+try{const c=localStorage.getItem(KEY);if(c)D=Object.assign(fresh(),JSON.parse(c));fbUrl=localStorage.getItem(URLKEY)||""}catch(e){}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const pad=n=>String(n).padStart(2,"0");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+const nowS=()=>today()+" "+pad(new Date().getHours())+":"+pad(new Date().getMinutes());
+const arr=v=>Array.isArray(v)?v.filter(x=>x!=null):v?Object.values(v):[];
+const num=v=>v===null||v===undefined||v===""||isNaN(v)?null:Number(v);
+const fp=v=>v==null?"—":v.toFixed(1)+"%";
+const total=s=>{s=arr(s);const c=D.criteria;if(s.length!==c.length||s.some(v=>v==null||isNaN(v)))return null;return Math.round(s.reduce((a,v,i)=>a+v*c[i].weight/100,0)*10)/10};
+const rate=t=>t==null?"—":t>=90?"Xuất sắc":t>=80?"Tốt":t>=65?"Đạt":"Cần cải thiện";
+const effStatus=t=>t.pct>=100||t.status==="Đã hoàn thành"?"Đã hoàn thành":(t.deadline&&t.deadline<today()&&t.status!=="Đã hoàn thành"?"Trễ hạn":t.status);
+const stTag=s=>`<span class="tag ${s==="Đã hoàn thành"?"t-ok":s==="Trễ hạn"?"t-er":s==="Chưa bắt đầu"?"":"t-ac"}">${s}</span>`;
+const bar=p=>`<div class="bar"><i style="width:${Math.min(100,p||0)}%"></i></div>`;
+const opts=(l,v)=>l.map(x=>`<option ${x===v?"selected":""}>${esc(x)}</option>`).join("");
+const msg=(m,t)=>{const e=$("gm");if(e){e.innerHTML=`<div class="alert ${t}">${m}</div>`;setTimeout(()=>e.innerHTML="",3500)}};
+const normalize=d=>{d.members=arr(d.members);d.tasks=arr(d.tasks);d.notes=arr(d.notes);d.criteria=arr(d.criteria);d.checks=d.checks||{};d.info=d.info||{};d.members.forEach(m=>{m.self=m.self?arr(m.self):null;m.leader=m.leader?arr(m.leader):null});return d};
+
+/* ---------- Lưu & đồng bộ ---------- */
+function save(){D.updated=Date.now();try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}clearTimeout(timer);timer=setTimeout(sync,700)}
+function mergeById(a,b){const m=new Map();[...arr(a),...arr(b)].forEach(x=>{const o=m.get(x.id);if(!o||(x.ts||0)>(o.ts||0))m.set(x.id,x)});return[...m.values()].sort((x,y)=>x.id-y.id)}
+function merge(l,r){
+  const base=(r.updated||0)>(l.updated||0)?r:l;
+  const out=Object.assign({},base);
+  out.members=mergeById(l.members,r.members);out.tasks=mergeById(l.tasks,r.tasks);
+  const seen=new Set();out.notes=[...arr(l.notes),...arr(r.notes)].filter(n=>{const k=n.time+n.text;if(seen.has(k))return false;seen.add(k);return true}).sort((a,b)=>a.time<b.time?1:-1);
+  out.updated=Math.max(l.updated||0,r.updated||0);return normalize(out)}
+function st(t,c){const e=$("syncst");if(e){e.textContent=t;e.style.color=c||""}}
+async function sync(){
+  if(!fbUrl){st("Chưa kết nối (chỉ lưu trên máy này)");return}
+  try{
+    st("Đang đồng bộ...");
+    const r=await fetch(fbUrl+"/ws.json");if(!r.ok)throw 0;
+    const remote=await r.json();
+    const before=JSON.stringify(D);
+    if(remote)D=merge(D,normalize(remote));
+    const res=await fetch(fbUrl+"/ws.json",{method:"PUT",body:JSON.stringify(D)});if(!res.ok)throw 0;
+    localStorage.setItem(KEY,JSON.stringify(D));
+    st("✓ Đã đồng bộ "+new Date().toLocaleTimeString("vi-VN"),"var(--okt)");
+    const a=document.activeElement;
+    if(before!==JSON.stringify(D)&&!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)))render();
+  }catch(e){st("⚠ Lỗi đồng bộ — kiểm tra URL & Rules của Firebase","var(--ert)")}}
+function setUrl(v){fbUrl=v.trim().replace(/\/+$/,"").replace(/\/ws\.json$/,"");localStorage.setItem(URLKEY,fbUrl);sync()}
+setInterval(()=>{if(fbUrl&&!document.hidden)sync()},8000);
+
+/* ---------- Cập nhật dữ liệu ---------- */
+function U(k,id,f,v,re){const l=k==="m"?D.members:D.tasks;const o=l.find(x=>x.id===id);if(!o)return;o[f]=(f==="pct")?Math.max(0,Math.min(100,Number(v)||0)):v;o.ts=Date.now();save();if(re)render()}
+function I(f,v){D.info[f]=v;save()}
+function C(i,f,v,re){D.criteria[i][f]=f==="weight"?Number(v)||0:v;save();if(re)render()}
+function addTask(){D.tasks.push({id:Date.now(),name:"Công việc mới",owner:D.members[0]?.name||"",deadline:D.info.deadline,status:"Chưa bắt đầu",pct:0,note:"",ts:Date.now()});save();render()}
+function addMem(){D.members.push({id:Date.now(),name:"Thành viên mới",role:"",tasks:"",pct:0,signed:false,self:null,leader:null,selfC:"",leaderC:"",ts:Date.now()});save();render()}
+function del(k,id){if(!confirm("Xóa mục này?"))return;const l=k==="m"?"members":"tasks";D[l]=D[l].filter(x=>x.id!==id);save();render()}
+function addNote(){const t=$("nt").value.trim();if(!t)return;D.notes.unshift({time:nowS(),author:$("na").value,text:t});save();render()}
+function chk(i,v){D.checks["c"+i]=v;save();render()}
+function submitScore(){
+  const id=Number($("sm").value),type=$("stype").value,m=D.members.find(x=>x.id===id);
+  const s=D.criteria.map((_,i)=>num($("sc"+i).value));
+  if(s.some(v=>v==null||v<0||v>100))return msg("Hãy nhập đủ điểm 0–100 cho mọi tiêu chí.","err");
+  if(type==="leader"&&!pinOk){if(prompt("Nhập mã PIN trưởng nhóm:")!==PIN)return msg("Sai PIN.","err");pinOk=true}
+  m[type]=s;m[type==="self"?"selfC":"leaderC"]=$("scm").value;m.ts=Date.now();save();msg("Đã lưu điểm cho "+esc(m.name),"ok");render()}
+function exportCSV(){
+  const rows=[["Họ tên","Vai trò","Tiến độ %","Tự chấm","TN chấm","Chênh lệch","Xếp loại"]];
+  D.members.forEach(m=>{const a=total(m.self),b=total(m.leader);rows.push([m.name,m.role,m.pct,a??"",b??"",a!=null&&b!=null?(b-a).toFixed(1):"",rate(b??a)])});
+  const blob=new Blob(["\ufeff"+rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="bang-diem.csv";a.click()}
+function resetAll(){if(confirm("Xóa toàn bộ dữ liệu về mặc định?")){D=fresh();save();render()}}
+
+/* ---------- Giao diện ---------- */
+const NAV=[["ov","📊 Tổng quan"],["info","📖 Nội dung & Thông tin"],["tasks","📋 Quản lý công việc"],["mem","👥 Phân công thành viên"],["matrix","🎯 Bảng điểm chung"],["form","✏️ Nhập điểm"],["rubric","📏 Tiêu chí Rubric"],["proc","✅ Quy trình & Checklist"],["notes","📝 Ghi chú & Nhật ký"]];
+const owners=()=>D.members.map(m=>m.name);
+const V={
+ov(){
+  const t=D.tasks,avg=t.length?Math.round(t.reduce((a,x)=>a+x.pct,0)/t.length):0;
+  const done=t.filter(x=>effStatus(x)==="Đã hoàn thành").length,late=t.filter(x=>effStatus(x)==="Trễ hạn").length;
+  const days=Math.ceil((new Date(D.info.date)-new Date(today()))/864e5);
+  return `<h2>Tổng quan dự án</h2><p class="sub">Cập nhật: ${D.updated?new Date(D.updated).toLocaleString("vi-VN"):"—"}</p>
+  <div class="grid"><div class="box"><div class="lbl">Tiến độ chung</div><div class="big">${avg}%</div>${bar(avg)}</div>
+  <div class="box"><div class="lbl">Công việc hoàn thành</div><div class="big">${done}/${t.length}</div></div>
+  <div class="box"><div class="lbl">Trễ hạn</div><div class="big" style="color:${late?"var(--ert)":"inherit"}">${late}</div></div>
+  <div class="box"><div class="lbl">Còn lại đến ngày thuyết trình</div><div class="big">${isNaN(days)?"—":days<0?"Đã qua":days+" ngày"}</div></div>
+  <div class="box"><div class="lbl">Trạng thái dự án</div><select onchange="D.pstatus=this.value;save()">${opts(PSTATUS,D.pstatus)}</select></div></div>
+  <h3>Tiến độ từng thành viên</h3><div class="wrap"><table><tr><th>Thành viên</th><th>Vai trò</th><th style="width:200px">Tiến độ</th></tr>
+  ${D.members.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.role)}</td><td>${m.pct}%${bar(m.pct)}</td></tr>`).join("")}</table></div>`},
+info(){
+  const f=[["topic","Chủ đề"],["date","Ngày thuyết trình","date"],["deadline","Hạn nộp","date"],["teacher","Giáo viên"],["leader","Trưởng nhóm"],["link","Link tài liệu chung"]];
+  return `<h2>Nội dung & Thông tin</h2><p class="sub">Thông tin chung của dự án</p><div class="box"><div class="f">
+  ${f.map(x=>`<label>${x[1]}</label><input type="${x[2]||"text"}" value="${esc(D.info[x[0]])}" oninput="I('${x[0]}',this.value)">`).join("")}</div></div>
+  ${D.info.link?`<p><a href="${esc(D.info.link)}" target="_blank" rel="noopener">🔗 Mở tài liệu chung</a></p>`:""}`},
+tasks(){
+  const l=D.tasks.filter(t=>(!F.owner||t.owner===F.owner)&&(!F.status||effStatus(t)===F.status));
+  return `<h2>Quản lý công việc</h2><p class="sub">Công việc có hạn nộp đã qua sẽ tự chuyển "Trễ hạn"</p>
+  <div class="tools"><select onchange="F.owner=this.value;render()"><option value="">Tất cả người</option>${owners().map(o=>`<option ${o===F.owner?"selected":""}>${esc(o)}</option>`).join("")}</select>
+  <select onchange="F.status=this.value;render()"><option value="">Mọi trạng thái</option>${opts(STATUS,F.status)}</select><button class="btn p" onclick="addTask()">+ Thêm việc</button></div>
+  <div class="wrap"><table><tr><th>Công việc</th><th>Phụ trách</th><th>Hạn</th><th>Trạng thái</th><th>%</th><th>Ghi chú</th><th></th></tr>
+  ${l.map(t=>`<tr><td><input value="${esc(t.name)}" oninput="U('t',${t.id},'name',this.value)"></td>
+  <td><select onchange="U('t',${t.id},'owner',this.value)">${owners().map(o=>`<option ${o===t.owner?"selected":""}>${esc(o)}</option>`).join("")}</select></td>
+  <td><input type="date" value="${t.deadline}" onchange="U('t',${t.id},'deadline',this.value,1)"></td>
+  <td><select onchange="U('t',${t.id},'status',this.value,1)">${opts(STATUS,t.status)}</select><br>${stTag(effStatus(t))}</td>
+  <td><input type="number" min="0" max="100" value="${t.pct}" onchange="U('t',${t.id},'pct',this.value,1)">${bar(t.pct)}</td>
+  <td><input value="${esc(t.note)}" oninput="U('t',${t.id},'note',this.value)"></td><td><button class="x" onclick="del('t',${t.id})">×</button></td></tr>`).join("")}</table></div>`},
+mem(){
+  const l=D.members.filter(m=>(m.name+m.role).toLowerCase().includes(Q.toLowerCase()));
+  return `<h2>Phân công thành viên</h2><p class="sub">${D.members.length} thành viên</p>
+  <div class="tools"><input placeholder="🔍 Tìm thành viên..." value="${esc(Q)}" oninput="Q=this.value;render();this.focus()"><button class="btn p" onclick="addMem()">+ Thêm</button></div>
+  <div class="wrap"><table><tr><th>Họ tên</th><th>Vai trò</th><th>Nhiệm vụ</th><th>%</th><th>Đã xác nhận</th><th></th></tr>
+  ${l.map(m=>`<tr><td><input value="${esc(m.name)}" oninput="U('m',${m.id},'name',this.value)"></td><td><input value="${esc(m.role)}" oninput="U('m',${m.id},'role',this.value)"></td>
+  <td><input value="${esc(m.tasks)}" oninput="U('m',${m.id},'tasks',this.value)"></td>
+  <td><input type="number" min="0" max="100" value="${m.pct}" onchange="U('m',${m.id},'pct',this.value,1)"></td>
+  <td><input type="checkbox" ${m.signed?"checked":""} onchange="U('m',${m.id},'signed',this.checked)"></td><td><button class="x" onclick="del('m',${m.id})">×</button></td></tr>`).join("")}</table></div>`},
+matrix(){
+  return `<h2>Bảng điểm chung</h2><p class="sub">Điểm tổng = tổng (điểm × trọng số). Xếp loại theo điểm trưởng nhóm, nếu chưa có thì theo tự chấm.</p>
+  <div class="tools"><button class="btn" onclick="exportCSV()">⬇ Xuất CSV</button></div>
+  <div class="wrap"><table><tr><th>Thành viên</th><th>Tiến độ</th><th>Tự chấm</th><th>TN chấm</th><th>Chênh lệch</th><th>Xếp loại</th><th>Nhận xét</th></tr>
+  ${D.members.map(m=>{const a=total(m.self),b=total(m.leader),d=a!=null&&b!=null?b-a:null,r=rate(b??a);
+  return `<tr><td><b>${esc(m.name)}</b></td><td>${m.pct}%</td><td>${fp(a)}</td><td>${fp(b)}</td>
+  <td>${d==null?"—":`<span class="tag ${Math.abs(d)>10?"t-wn":"t-ok"}">${d>0?"+":""}${d.toFixed(1)}</span>`}</td>
+  <td><span class="tag ${r==="Xuất sắc"||r==="Tốt"?"t-ok":r==="Đạt"?"t-ac":r==="—"?"":"t-er"}">${r}</span></td>
+  <td style="font-size:12px;color:var(--mu)">${esc(m.leaderC||m.selfC)}</td></tr>`}).join("")}</table></div>`},
+form(){
+  const m0=D.members[0];
+  return `<h2>Nhập điểm đánh giá</h2><p class="sub">Thang 0–100 cho mỗi tiêu chí. Điểm trưởng nhóm cần PIN.</p><div id="gm"></div>
+  <div class="box"><div class="f"><label>Thành viên</label><select id="sm" onchange="fillForm()">${D.members.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join("")}</select>
+  <label>Loại đánh giá</label><select id="stype" onchange="fillForm()"><option value="self">Tự đánh giá</option><option value="leader">Trưởng nhóm đánh giá</option></select>
+  ${D.criteria.map((c,i)=>`<label>${esc(c.name)} (${c.weight}%)</label><input type="number" id="sc${i}" min="0" max="100">`).join("")}
+  <label>Nhận xét</label><textarea id="scm"></textarea><span></span><button class="btn p" onclick="submitScore()">Lưu điểm</button></div></div>`},
+rubric(){
+  const sum=D.criteria.reduce((a,c)=>a+c.weight,0);
+  return `<h2>Tiêu chí Rubric</h2><p class="sub">Đổi trọng số sẽ ảnh hưởng toàn bộ điểm tổng</p>
+  <div class="alert ${sum===100?"ok":"err"}">Tổng trọng số: ${sum}% ${sum===100?"✓":"— cần đúng 100%"}</div>
+  <div class="wrap"><table><tr><th>Tiêu chí</th><th>Trọng số %</th></tr>${D.criteria.map((c,i)=>`<tr><td><input value="${esc(c.name)}" oninput="C(${i},'name',this.value)"></td><td><input type="number" value="${c.weight}" onchange="C(${i},'weight',this.value,1)"></td></tr>`).join("")}</table></div>
+  <p class="lbl">Xếp loại: ≥90 Xuất sắc · ≥80 Tốt · ≥65 Đạt · &lt;65 Cần cải thiện</p>`},
+proc(){
+  const n=CHECKS.filter((_,i)=>D.checks["c"+i]).length;
+  return `<h2>Quy trình & Checklist</h2><p class="sub">Hoàn thành ${n}/${CHECKS.length}</p>${bar(n/CHECKS.length*100)}
+  <h3>Checklist thuyết trình</h3><div class="box">${CHECKS.map((c,i)=>`<label class="chk"><input type="checkbox" ${D.checks["c"+i]?"checked":""} onchange="chk(${i},this.checked)"> ${c}</label>`).join("")}</div>
+  <h3>Deadline & Quy tắc</h3><div class="box"><p>• Hạn nộp sản phẩm: <b>${esc(D.info.deadline)}</b> · Thuyết trình: <b>${esc(D.info.date)}</b></p>
+  <p>• Thời lượng tối đa 10 phút.</p><p>• Cập nhật tiến độ & trạng thái công việc ít nhất mỗi ngày.</p><p>• Mọi nguồn tài liệu/hình ảnh phải có trích dẫn.</p><p>• Tự chấm điểm trung thực; trưởng nhóm chấm sau khi mọi người đã nhập.</p></div>
+  <p style="margin-top:20px"><button class="btn" onclick="resetAll()">Đặt lại dữ liệu mặc định</button></p>`},
+notes(){
+  return `<h2>Ghi chú & Nhật ký</h2><p class="sub">Mọi thành viên cùng thấy khi đã bật đồng bộ</p>
+  <div class="box"><div class="tools"><select id="na">${owners().map(o=>`<option>${esc(o)}</option>`).join("")}</select></div><textarea id="nt" placeholder="Nội dung ghi chú..."></textarea><p><button class="btn p" onclick="addNote()">Thêm ghi chú</button></p></div>
+  ${D.notes.map(n=>`<div class="box" style="margin-top:10px"><div class="lbl">${esc(n.time)} · <b>${esc(n.author)}</b></div>${esc(n.text)}</div>`).join("")}`}
+};
+function fillForm(){
+  const m=D.members.find(x=>x.id===Number($("sm").value)),t=$("stype").value,s=m&&m[t]?arr(m[t]):[];
+  D.criteria.forEach((_,i)=>$("sc"+i).value=s[i]??"");$("scm").value=m?(t==="self"?m.selfC:m.leaderC)||"":""}
+function render(){
+  $("nav").innerHTML=NAV.map(n=>`<button class="${n[0]===page?"on":""}" onclick="go('${n[0]}')">${n[1]}</button>`).join("");
+  try{$("main").innerHTML=`<div id="gm"></div>`+V[page in V?page:"ov"]();if(page==="form")fillForm()}
+  catch(e){$("main").innerHTML=`<div class="alert err">Lỗi hiển thị: ${esc(e.message)}. <button class="btn" onclick="resetAll()">Đặt lại dữ liệu</button></div>`}}
+function go(p){page=p;location.hash=p;render();scrollTo(0,0)}
+normalize(D);$("fburl").value=fbUrl;render();sync();
+</script>
+</body>
+</html>
